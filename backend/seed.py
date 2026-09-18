@@ -73,7 +73,7 @@ created_credentials: list[tuple[str, str, str]] = []
 
 try:
     # ---------------------------------------------------------
-    # SUPERADMIN
+    # SUPERADMIN - password sync
     # ---------------------------------------------------------
     admin = db.query(User).filter(
         User.email == ADMIN_EMAIL
@@ -164,8 +164,6 @@ try:
         )
 
     db.commit()
-
-    # ---------------------------------------------------------
     # SAMPLE SCHEMES
     # ---------------------------------------------------------
     if db.query(Scheme).count() == 0:
