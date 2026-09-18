@@ -68,6 +68,12 @@ services:
       - key: SEED_ADMIN_PASSWORD
         sync: false
 
+      - key: SEED_STAFF_EMAIL
+        sync: false
+
+      - key: SEED_STAFF_PASSWORD
+        sync: false
+
   # React/Vite frontend
   - type: web
     name: janseva-web
