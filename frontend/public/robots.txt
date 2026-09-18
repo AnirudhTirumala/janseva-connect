@@ -1,0 +1,13 @@
+# This portal holds citizen household records behind authentication. Only the
+# public landing page is worth indexing; everything else is a signed-in route
+# that a crawler would only ever see as a login redirect.
+User-agent: *
+Allow: /$
+Disallow: /applications
+Disallow: /certificates
+Disallow: /members
+Disallow: /users
+Disallow: /database
+Disallow: /chat
+Disallow: /issues
+Disallow: /assistant

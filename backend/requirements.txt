@@ -1,0 +1,24 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy==2.0.35
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+# 2.9.9 ships no cp313 wheel. On a host that defaults to Python 3.13 (Render
+# now does), pip falls back to building from source and the deploy fails with
+# "pg_config executable not found". 2.9.13 has wheels through cp315.
+psycopg2-binary==2.9.13
+pymysql==1.1.1
+python-dotenv==1.0.1
+reportlab==4.2.5
+groq==1.7.0
+# groq 1.x requires httpx>=0.23,<1. Pinning httpx to 0.27.x here was what
+# made the assistant fail: the old groq SDK passed a `proxies=` argument
+# that httpx 0.28 removed, so every Groq() call raised TypeError and the
+# AI features silently answered "temporarily unavailable" instead.
+httpx==0.28.1
+slowapi==0.1.9
+bcrypt==4.0.1
+email-validator==2.2.0

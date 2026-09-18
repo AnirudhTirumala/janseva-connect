@@ -1,0 +1,326 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #F6F4EE;
+  color: #1C2420;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid #DC8F2A;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Signature element: an official "seal" ring, used on the letterhead
+   header and certificate/status cards to evoke a Panchayat office stamp. */
+.pp-seal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+}
+
+.pp-seal::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  opacity: 0.5;
+}
+
+.pp-hairline {
+  border-top: 1px solid #D8D2C0;
+}
+
+.pp-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.pp-scrollbar::-webkit-scrollbar-thumb {
+  background: #CFE0D6;
+  border-radius: 999px;
+}
+
+html { scroll-behavior: smooth; }
+
+.landing-page {
+  background-image: radial-gradient(circle at 12% 5%, rgba(240, 184, 96, .16), transparent 23rem), radial-gradient(circle at 85% 26%, rgba(123, 168, 149, .13), transparent 26rem);
+}
+.landing-nav-link { position: relative; transition: color .2s ease; }
+.landing-nav-link::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #DC8F2A; transition: width .2s ease; }
+.landing-nav-link:hover::after { width: 100%; }
+.landing-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: #153328; background: #F0B860; box-shadow: 0 8px 16px rgba(220, 143, 42, .18); }
+.landing-orb { position: absolute; border-radius: 999px; filter: blur(1px); pointer-events: none; }
+.landing-orb-one { width: 17rem; height: 17rem; right: 3%; top: 4%; background: rgba(240, 184, 96, .20); animation: landingDrift 8s ease-in-out infinite; }
+.landing-orb-two { width: 11rem; height: 11rem; right: 38%; bottom: 8%; background: rgba(123, 168, 149, .16); animation: landingDrift 10s ease-in-out -4s infinite reverse; }
+.landing-float { isolation: isolate; perspective: 1500px; transform-style: preserve-3d; }
+.landing-float::before { content: ''; position: absolute; z-index: -2; left: 50%; top: 50%; width: 16.5rem; height: 23rem; border-radius: 5.5rem; transform: translate(-50%, -48%) rotateY(-18deg) rotateX(7deg); background: radial-gradient(circle at 32% 19%, rgba(255,255,255,.3), transparent 7%), linear-gradient(145deg, #214c3e 0%, #0d211a 46%, #071510 100%); box-shadow: inset 17px 8px 25px rgba(255,255,255,.06), inset -21px -18px 30px rgba(0,0,0,.38), 32px 38px 60px rgba(8,27,21,.24); }
+.landing-float::after { content: ''; position: absolute; z-index: -3; left: 50%; top: 59%; width: 26rem; height: 11rem; border-radius: 50%; transform: translateX(-50%) rotateX(67deg) rotateZ(-8deg); border: 1px solid rgba(240,184,96,.46); background: radial-gradient(ellipse, rgba(240,184,96,.2), rgba(46,92,74,.06) 48%, transparent 69%); box-shadow: 0 22px 30px rgba(8,27,21,.16), inset 0 0 0 15px rgba(255,255,255,.1), inset 0 0 0 16px rgba(15,52,42,.1); animation: scenePlatform 10s ease-in-out infinite; }
+.landing-dashboard { z-index: 2; transform: perspective(1000px) rotateY(-7deg) rotateX(4deg) translateZ(32px); box-shadow: 24px 30px 55px rgba(7,21,16,.23); }
+.landing-reveal { animation: landingReveal .75s ease-out both; }
+.landing-float { animation: landingFloat 6s ease-in-out infinite; }
+.landing-float-delayed { animation: landingFloat 5s ease-in-out -2.5s infinite; }
+.landing-citizen-card { position: absolute; z-index: 3; width: 205px; border: 1px solid rgba(255,255,255,.85); border-radius: 18px; background: rgba(255,255,255,.92); padding: 13px; box-shadow: 0 18px 35px rgba(13,32,25,.13); backdrop-filter: blur(12px); animation: landingFloat 5.5s ease-in-out -1.8s infinite; }
+.landing-citizen-one { left: 0; bottom: 14px; }
+.landing-citizen-two { right: 0; top: 0; animation-delay: -3.7s; }
+.landing-slide-panel { animation: slidePanelIn .38s cubic-bezier(.2,.75,.2,1) both; }
+/* Ambient background glow + texture shared by the login/register/forgot-password
+   auth pages - same visual language as the landing-orb glows above. */
+.login-halo { position: absolute; border-radius: 999px; filter: blur(70px); pointer-events: none; z-index: 0; }
+.login-halo-one { width: 22rem; height: 22rem; left: -6rem; top: -4rem; background: rgba(240, 184, 96, .22); animation: landingDrift 11s ease-in-out infinite; }
+.login-halo-two { width: 18rem; height: 18rem; right: -5rem; bottom: -3rem; background: rgba(46, 92, 74, .16); animation: landingDrift 9s ease-in-out -3.5s infinite reverse; }
+.login-pattern { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,.12) .8px, transparent .8px); background-size: 20px 20px; pointer-events: none; }
+/* Ambient glow for the dashboard hero banner (bg-panchayat-700) - previously
+   an empty, unstyled div that rendered nothing. Same blurred-blob language
+   as landing-orb/login-halo above, warmed toward marigold to read clearly
+   against the hero's dark green. */
+.dashboard-command { position: relative; }
+.dashboard-command::before { content: ''; position: absolute; z-index: -1; inset: -1.25rem -1rem auto; height: 20rem; border-radius: 2.5rem; background: radial-gradient(circle at 84% 20%, rgba(240,184,96,.22), transparent 21rem), linear-gradient(135deg, rgba(16,48,39,.08), rgba(255,255,255,0)); pointer-events: none; }
+.dashboard-command .dashboard-hero { background-image: radial-gradient(circle at 82% 14%, rgba(240,184,96,.22), transparent 23rem), linear-gradient(130deg, #0b211a 0%, #153328 58%, #224f40 100%); box-shadow: 0 25px 52px rgba(11,33,26,.21), inset 0 1px 0 rgba(255,255,255,.1); }
+.dashboard-command .dashboard-hero::after { content: ''; position: absolute; inset: 0; opacity: .22; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, transparent, black 48%, transparent); }
+.dashboard-command > .grid > div { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(247,248,244,.9)); }
+.dashboard-hero-glow { position: absolute; top: -35%; right: -8%; width: 22rem; height: 22rem; border-radius: 999px; filter: blur(80px); pointer-events: none; z-index: 0; background: radial-gradient(circle, rgba(240,184,96,.35), rgba(240,184,96,0) 70%); animation: landingDrift 12s ease-in-out infinite; }
+.chat-surface { background-color: #f8f7f2; background-image: radial-gradient(rgba(46,92,74,.10) .7px, transparent .7px); background-size: 18px 18px; }
+.assistant-orb { animation: assistantPulse 2.4s ease-in-out infinite; }
+.assistant-typing { display: inline-flex; gap: 3px; align-items: center; }
+.assistant-typing i { width: 4px; height: 4px; border-radius: 50%; background: #B87220; animation: typingDot 1s ease-in-out infinite; }
+.assistant-typing i:nth-child(2) { animation-delay: .15s; }.assistant-typing i:nth-child(3) { animation-delay: .3s; }
+
+/* Shared spatial layer for every signed-in page. The depth is deliberately
+   restrained: information remains easy to scan, while panels, charts and
+   workflow surfaces have a consistent modern 3D presence. */
+.portal-shell { isolation: isolate; background-image: radial-gradient(circle at 82% 8%, rgba(240,184,96,.20), transparent 25rem), radial-gradient(circle at 40% 100%, rgba(123,168,149,.16), transparent 31rem), linear-gradient(135deg, #f8f7f2 0%, #f6f4ee 48%, #edf2ee 100%); }
+.portal-shell::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .42; background-image: linear-gradient(rgba(21,51,40,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(21,51,40,.035) 1px, transparent 1px); background-size: 26px 26px; mask-image: linear-gradient(to bottom, black, transparent 78%); }
+.portal-orbit { position: absolute; z-index: 0; width: 24rem; height: 24rem; border: 1px solid rgba(46,92,74,.12); border-radius: 999px; pointer-events: none; transform-style: preserve-3d; }
+.portal-orbit::after { content: ''; position: absolute; width: .65rem; height: .65rem; border-radius: 999px; background: #F0B860; box-shadow: 0 0 0 7px rgba(240,184,96,.14), 0 10px 22px rgba(184,114,32,.24); }
+.portal-orbit-one { top: -15rem; right: -11rem; transform: rotateX(64deg) rotateZ(22deg); animation: portalOrbit 18s linear infinite; }
+.portal-orbit-one::after { left: 7%; top: 48%; }
+.portal-orbit-two { bottom: -17rem; left: 14%; width: 32rem; height: 32rem; border-color: rgba(46,92,74,.08); transform: rotateX(68deg) rotateZ(-14deg); animation: portalOrbit 24s linear infinite reverse; }
+.portal-orbit-two::after { right: 8%; top: 43%; background: #7BA895; box-shadow: 0 0 0 7px rgba(123,168,149,.13), 0 10px 22px rgba(46,92,74,.18); }
+.portal-sidebar { overflow: hidden; background-image: radial-gradient(circle at 110% -4%, rgba(240,184,96,.20), transparent 14rem), linear-gradient(155deg, #1d4a3b 0%, #153328 52%, #0d2019 100%); }
+.portal-sidebar::after { content: ''; position: absolute; right: -70px; bottom: 120px; width: 180px; height: 180px; border: 1px solid rgba(240,184,96,.15); border-radius: 999px; transform: rotateX(63deg); pointer-events: none; }
+.portal-topbar { backdrop-filter: blur(18px); }
+.portal-page { position: relative; z-index: 1; perspective: 1500px; }
+.portal-page > .space-y-6 { animation: pageDepthIn .52s cubic-bezier(.16,1,.3,1) both; }
+.portal-page :is(section, article, .assistant-shell, table) { transform-style: preserve-3d; }
+.portal-page :is(section.rounded-3xl, article.rounded-3xl, .assistant-shell, .rounded-3xl.bg-white) { box-shadow: 0 16px 34px rgba(13,32,25,.055), 0 2px 7px rgba(13,32,25,.035); }
+@media (hover: hover) and (min-width: 768px) {
+  .portal-page :is(section.rounded-3xl, article.rounded-3xl, .assistant-shell, .rounded-3xl.bg-white) { transition: transform .26s cubic-bezier(.2,.8,.2,1), box-shadow .26s ease, border-color .26s ease; }
+  .portal-page :is(section.rounded-3xl, article.rounded-3xl, .assistant-shell, .rounded-3xl.bg-white):hover { transform: translateY(-3px) rotateX(.45deg); box-shadow: 0 24px 44px rgba(13,32,25,.09), 0 3px 9px rgba(13,32,25,.04); }
+}
+
+/* Give the entry pages the same dimensional language without compromising
+   their compact forms or keyboard navigation. */
+:is(.login-page, .register-page, .forgot-password-page) { perspective: 1600px; background-image: radial-gradient(circle at 14% 9%, rgba(240,184,96,.19), transparent 22rem), radial-gradient(circle at 87% 80%, rgba(123,168,149,.16), transparent 25rem); }
+@media (min-width: 1024px) {
+  :is(.login-page, .register-page, .forgot-password-page) > section:first-of-type { transform: rotateY(1.6deg) rotateX(.35deg); transform-origin: left center; }
+  :is(.login-page, .register-page, .forgot-password-page) .login-card { transform: rotateY(-1.8deg) rotateX(.35deg); box-shadow: 24px 30px 60px rgba(13,32,25,.13), -3px 4px 12px rgba(13,32,25,.05); }
+}
+@keyframes landingReveal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes landingFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-11px); } }
+@keyframes landingDrift { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(13px, -20px, 0) scale(1.06); } }
+@keyframes scenePlatform { 0%,100% { transform: translateX(-50%) rotateX(67deg) rotateZ(-8deg) scale(1); } 50% { transform: translateX(-50%) rotateX(67deg) rotateZ(-8deg) scale(1.04); } }
+@keyframes slidePanelIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes assistantPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(240,184,96,.35); } 50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(240,184,96,0); } }
+@keyframes typingDot { 0%,100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-3px); opacity: 1; } }
+@keyframes portalOrbit { from { rotate: 0deg; } to { rotate: 360deg; } }
+@keyframes pageDepthIn { from { opacity: 0; transform: translateY(10px) rotateX(1deg); } to { opacity: 1; transform: translateY(0) rotateX(0); } }
+@media (max-width: 520px) { .landing-citizen-card { width: 175px; padding: 11px; } .landing-citizen-one { left: -2px; } .landing-citizen-two { right: -2px; } }
+
+/* -------------------------------------------------------------------------
+   AURORA 3D DESIGN SYSTEM
+   This layer deliberately sits after the original component styles. It gives
+   every page the same premium Dribbble-inspired spatial language: midnight
+   structure, ice-glass surfaces, violet signal colour, and restrained motion.
+   ------------------------------------------------------------------------- */
+:root { color-scheme: light; }
+body { background: #f4f6fc; color: #172033; }
+
+.landing-page {
+  position: relative;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(124,92,252,.20), transparent 26rem),
+    radial-gradient(circle at 91% 22%, rgba(72,212,218,.22), transparent 24rem),
+    radial-gradient(circle at 54% 85%, rgba(157,174,255,.20), transparent 27rem),
+    linear-gradient(145deg, #f9faff 0%, #eff2fb 51%, #e6ebfa 100%);
+}
+.landing-page::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .46; background-image: linear-gradient(rgba(39,53,117,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(39,53,117,.06) 1px, transparent 1px); background-size: 36px 36px; mask-image: radial-gradient(ellipse at 60% 22%, black, transparent 68%); }
+.landing-nav { position: relative; z-index: 5; }
+.landing-nav::before { content: ''; position: absolute; z-index: -1; inset: 9px 1.5rem; border: 1px solid rgba(255,255,255,.9); border-radius: 999px; background: rgba(255,255,255,.56); box-shadow: 0 14px 35px rgba(29,40,95,.08), inset 0 1px rgba(255,255,255,.85); backdrop-filter: blur(18px); }
+.landing-mark { color: #fff; background: linear-gradient(145deg, #8a70ff, #4d41c3 68%, #232869); box-shadow: 0 12px 24px rgba(85,64,218,.32), inset 0 1px rgba(255,255,255,.42); }
+.landing-nav-link::after { height: 3px; border-radius: 999px; background: linear-gradient(90deg, #7c5cfc, #52cbd1); }
+.landing-page :is(.bg-panchayat-700, .bg-panchayat-600) { background-image: linear-gradient(135deg, #101740, #242969 56%, #3e3d91); }
+.landing-page :is(.bg-marigold-500, .bg-marigold-300) { background-image: linear-gradient(135deg, #9b7dff, #6b50e7); }
+.landing-orb { filter: blur(2px); mix-blend-mode: multiply; }
+.landing-orb-one { background: radial-gradient(circle, rgba(124,92,252,.35), rgba(124,92,252,.03) 68%); }
+.landing-orb-two { background: radial-gradient(circle, rgba(66,196,211,.28), rgba(66,196,211,.02) 70%); }
+.landing-float { perspective: 1800px; }
+.landing-float::before { width: 17rem; height: 25rem; border-radius: 5.7rem; background: radial-gradient(circle at 31% 15%, rgba(255,255,255,.28), transparent 8%), linear-gradient(145deg, #5156b9 0%, #161944 47%, #070a23 100%); box-shadow: inset 15px 9px 25px rgba(255,255,255,.12), inset -22px -20px 32px rgba(3,5,24,.7), 30px 45px 70px rgba(25,29,95,.30); }
+.landing-float::after { border-color: rgba(124,92,252,.52); background: radial-gradient(ellipse, rgba(94,219,222,.22), rgba(124,92,252,.15) 46%, transparent 70%); box-shadow: 0 28px 38px rgba(21,22,75,.22), inset 0 0 0 15px rgba(255,255,255,.12), inset 0 0 0 16px rgba(85,78,207,.22); }
+.landing-dashboard { border-color: rgba(255,255,255,.9); background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(224,229,255,.78)); box-shadow: 28px 35px 65px rgba(17,22,78,.25), inset 0 1px rgba(255,255,255,.92); transform: perspective(1100px) rotateY(-9deg) rotateX(4deg) translateZ(45px); }
+.landing-dashboard::before { content: ''; position: absolute; inset: -18px 24px auto; height: 30px; border-radius: 999px; background: rgba(124,92,252,.30); filter: blur(19px); }
+.landing-citizen-card { border-color: rgba(255,255,255,.88); background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(226,231,255,.72)); box-shadow: 0 22px 42px rgba(25,32,102,.16), inset 0 1px rgba(255,255,255,.85); }
+.landing-citizen-one { transform: perspective(900px) rotateY(7deg) rotateX(2deg); }
+.landing-citizen-two { transform: perspective(900px) rotateY(-7deg) rotateX(2deg); }
+
+.portal-shell { background: radial-gradient(circle at 90% 5%, rgba(124,92,252,.19), transparent 24rem), radial-gradient(circle at 42% 100%, rgba(52,193,209,.14), transparent 30rem), linear-gradient(145deg, #f8faff 0%, #edf1fb 48%, #e6ebfa 100%); }
+.portal-shell::before { opacity: .50; background-image: linear-gradient(rgba(42,55,126,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(42,55,126,.045) 1px, transparent 1px); background-size: 28px 28px; }
+.portal-sidebar { border-right: 1px solid rgba(255,255,255,.13); background: radial-gradient(circle at 110% -8%, rgba(153,128,255,.50), transparent 16rem), radial-gradient(circle at -12% 85%, rgba(48,210,211,.19), transparent 15rem), linear-gradient(165deg, #20255e 0%, #10153b 48%, #080b27 100%); box-shadow: 24px 0 55px rgba(13,17,63,.16), inset -1px 0 rgba(255,255,255,.06); }
+.portal-sidebar::after { right: -68px; bottom: 104px; border-color: rgba(184,176,255,.28); }
+.portal-sidebar nav a { border: 1px solid transparent; }
+.portal-sidebar nav a:hover { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.08); }
+.portal-sidebar nav a.bg-marigold-300 { background: linear-gradient(135deg, #a18aff, #7257ed); color: white; box-shadow: 0 11px 24px rgba(68,50,190,.34), inset 0 1px rgba(255,255,255,.28); }
+.portal-topbar { background: rgba(248,250,255,.72) !important; border-bottom-color: rgba(52,65,138,.10) !important; box-shadow: 0 10px 25px rgba(43,54,125,.05); }
+.portal-orbit { border-color: rgba(95,80,220,.16); }
+.portal-orbit-one::after { background: #856cff; box-shadow: 0 0 0 7px rgba(133,108,255,.15), 0 10px 22px rgba(83,64,215,.27); }
+.portal-orbit-two::after { background: #54cbd1; box-shadow: 0 0 0 7px rgba(84,203,209,.13), 0 10px 22px rgba(41,154,175,.20); }
+.portal-page { perspective: 1900px; }
+.portal-page > .space-y-6 { animation: auroraPageIn .62s cubic-bezier(.16,1,.3,1) both; }
+.portal-page :is(section.rounded-3xl, article.rounded-3xl, .rounded-3xl.bg-white, .rounded-2xl.bg-white) { border-color: rgba(75,90,164,.11) !important; background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(239,243,255,.82)) !important; box-shadow: 0 19px 38px rgba(30,41,112,.08), 0 3px 8px rgba(30,41,112,.04), inset 0 1px rgba(255,255,255,.92) !important; }
+.portal-page :is(section.rounded-3xl, article.rounded-3xl, .assistant-shell, .rounded-3xl.bg-white)::before { border-radius: inherit; }
+@media (hover: hover) and (min-width: 768px) {
+  .portal-page :is(section.rounded-3xl, article.rounded-3xl, .rounded-3xl.bg-white, .rounded-2xl.bg-white) { transition: transform .34s cubic-bezier(.2,.8,.2,1), box-shadow .34s ease, border-color .34s ease; }
+  .portal-page :is(section.rounded-3xl, article.rounded-3xl, .rounded-3xl.bg-white, .rounded-2xl.bg-white):hover { transform: translateY(-5px) rotateX(.65deg) rotateY(-.12deg); border-color: rgba(124,92,252,.25) !important; box-shadow: 0 28px 54px rgba(31,38,116,.13), 0 4px 11px rgba(31,38,116,.05), inset 0 1px rgba(255,255,255,.94) !important; }
+}
+.portal-page :is(input, textarea, select) { border-color: rgba(70,84,160,.16) !important; background: rgba(255,255,255,.76) !important; box-shadow: inset 0 1px 1px rgba(27,38,105,.03), 0 1px rgba(255,255,255,.84); }
+.portal-page :is(input, textarea, select):focus { border-color: rgba(124,92,252,.75) !important; box-shadow: 0 0 0 4px rgba(124,92,252,.13), inset 0 1px rgba(255,255,255,.9) !important; }
+.portal-page button.bg-panchayat-700, .portal-page button.bg-panchayat-600, .portal-page a.bg-panchayat-700 { background-image: linear-gradient(135deg, #252d70, #151a4d 58%, #343a8d); box-shadow: 0 10px 20px rgba(32,38,113,.20), inset 0 1px rgba(255,255,255,.15); }
+.portal-page button.bg-marigold-500, .portal-page button.bg-marigold-300, .portal-page a.bg-marigold-500 { background-image: linear-gradient(135deg, #a188ff, #7558f4); color: #fff; box-shadow: 0 10px 22px rgba(91,64,218,.25), inset 0 1px rgba(255,255,255,.25); }
+.portal-page table thead { background: rgba(232,236,255,.62) !important; }
+.portal-page table tbody tr:hover { background: rgba(124,92,252,.045); }
+
+.dashboard-command::before { background: radial-gradient(circle at 84% 20%, rgba(124,92,252,.25), transparent 21rem), radial-gradient(circle at 22% 85%, rgba(67,204,211,.15), transparent 19rem), linear-gradient(135deg, rgba(43,48,130,.10), rgba(255,255,255,0)); }
+.dashboard-command .dashboard-hero { border: 1px solid rgba(255,255,255,.12); background-image: radial-gradient(circle at 82% 14%, rgba(145,122,255,.32), transparent 23rem), radial-gradient(circle at 15% 110%, rgba(59,212,210,.17), transparent 20rem), linear-gradient(132deg, #0a1030 0%, #1e2666 56%, #333a8d 100%); box-shadow: 0 28px 58px rgba(23,27,90,.28), inset 0 1px rgba(255,255,255,.16); }
+.dashboard-command .dashboard-hero::after { opacity: .25; background-image: linear-gradient(rgba(217,222,255,.20) 1px, transparent 1px), linear-gradient(90deg, rgba(217,222,255,.20) 1px, transparent 1px); }
+.dashboard-command .dashboard-hero .bg-marigold-300 { background: linear-gradient(135deg, #d4cbff, #9582ff); }
+.dashboard-command > .grid > div { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(236,240,255,.88)); }
+
+.assistant-shell { position: relative; border-color: rgba(121,103,244,.28) !important; background: linear-gradient(145deg, #fdfdff, #e8edff) !important; box-shadow: 0 26px 58px rgba(38,39,126,.16), inset 0 1px rgba(255,255,255,.88) !important; }
+.assistant-shell::after { content: ''; position: absolute; inset: 5px; pointer-events: none; border: 1px solid rgba(255,255,255,.75); border-radius: 1.35rem; }
+.assistant-shell > :first-child { position: relative; z-index: 1; background-image: radial-gradient(circle at 84% 5%, rgba(145,122,255,.44), transparent 13rem), linear-gradient(135deg, #151b4f, #303781 68%, #4b48a4) !important; }
+.assistant-shell .chat-surface { position: relative; background-color: #eef2ff; background-image: radial-gradient(rgba(107,88,228,.14) .72px, transparent .72px), linear-gradient(135deg, rgba(255,255,255,.55), rgba(222,229,255,.72)); background-size: 19px 19px, 100% 100%; }
+.assistant-shell .chat-surface .bg-panchayat-700 { background-image: linear-gradient(135deg, #7860f5, #4e3dc3) !important; box-shadow: 0 8px 18px rgba(73,54,188,.22); }
+.assistant-orb { background: linear-gradient(145deg, #e6e1ff, #9784ff) !important; box-shadow: 0 9px 18px rgba(50,49,132,.25), inset 0 1px rgba(255,255,255,.72); }
+.chat-surface { background-color: #eef2ff; background-image: radial-gradient(rgba(91,76,194,.13) .7px, transparent .7px); }
+
+:is(.login-page, .register-page, .forgot-password-page) { background: radial-gradient(circle at 12% 10%, rgba(124,92,252,.34), transparent 25rem), radial-gradient(circle at 92% 79%, rgba(54,211,215,.23), transparent 27rem), linear-gradient(145deg, #e8edff 0%, #f6f8ff 47%, #e6ebfa 100%) !important; }
+:is(.login-page, .register-page, .forgot-password-page)::before { content: ''; position: absolute; z-index: 0; right: 4%; top: 8%; width: 26rem; height: 26rem; border: 1px solid rgba(103,85,231,.18); border-radius: 50%; transform: rotateX(67deg) rotateZ(-22deg); box-shadow: inset 0 0 0 20px rgba(124,92,252,.035), 0 35px 70px rgba(50,55,146,.08); animation: authOrbit 16s linear infinite; pointer-events: none; }
+:is(.login-page, .register-page, .forgot-password-page) > section:first-of-type { border: 1px solid rgba(255,255,255,.14); background: radial-gradient(circle at 110% 4%, rgba(164,147,255,.56), transparent 18rem), radial-gradient(circle at -4% 100%, rgba(51,206,210,.18), transparent 20rem), linear-gradient(155deg, #242a6a, #111541 54%, #070923) !important; box-shadow: 0 32px 65px rgba(24,29,100,.25), inset 0 1px rgba(255,255,255,.15) !important; }
+:is(.login-page, .register-page, .forgot-password-page) > section:first-of-type::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .25; background-image: linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(135deg, transparent 30%, black, transparent 80%); }
+:is(.login-page, .register-page, .forgot-password-page) .login-card, :is(.login-page, .register-page, .forgot-password-page) .rounded-\[2rem\].bg-white\/85 { border-color: rgba(255,255,255,.88) !important; background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(231,236,255,.78)) !important; box-shadow: 27px 32px 65px rgba(42,46,130,.18), inset 0 1px rgba(255,255,255,.98) !important; }
+:is(.login-page, .register-page, .forgot-password-page) :is(input, textarea, select) { border-color: rgba(74,85,169,.18) !important; background: rgba(255,255,255,.84) !important; box-shadow: inset 0 1px rgba(255,255,255,.94); }
+:is(.login-page, .register-page, .forgot-password-page) button.bg-panchayat-700 { background-image: linear-gradient(135deg, #313b89, #171c51 66%, #292f79); box-shadow: 0 12px 24px rgba(39,41,116,.22), inset 0 1px rgba(255,255,255,.18); }
+
+@keyframes auroraPageIn { from { opacity: 0; transform: translateY(18px) rotateX(1.5deg); } to { opacity: 1; transform: translateY(0) rotateX(0); } }
+@keyframes authOrbit { from { transform: rotateX(67deg) rotateZ(-22deg); } to { transform: rotateX(67deg) rotateZ(338deg); } }
+@media (prefers-reduced-motion: reduce) { .landing-float::after, :is(.login-page, .register-page, .forgot-password-page)::before { animation: none; } }
+
+/* Noir override: black and white language with red only for direct actions. */
+body { background: #f7f7f7; color: #101010; }
+.landing-page { background: radial-gradient(circle at 82% 16%, rgba(227,38,38,.16), transparent 24rem), radial-gradient(circle at 10% 89%, rgba(0,0,0,.10), transparent 29rem), linear-gradient(145deg, #ffffff 0%, #f5f5f5 52%, #e8e8e8 100%); }
+.landing-page::before { background-image: linear-gradient(rgba(0,0,0,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.055) 1px, transparent 1px); }
+.landing-mark { color: #fff; background: linear-gradient(145deg, #2a2a2a, #000); box-shadow: 0 12px 24px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.24); }
+.landing-nav-link::after { background: #e32626; }
+.landing-page :is(.bg-panchayat-700, .bg-panchayat-600) { background-image: linear-gradient(135deg, #151515, #000 70%, #262626); }
+.landing-page :is(.bg-marigold-500, .bg-marigold-300) { background-image: linear-gradient(135deg, #f04444, #c31212); }
+.landing-orb-one { background: radial-gradient(circle, rgba(227,38,38,.28), rgba(227,38,38,.02) 70%); }
+.landing-orb-two { background: radial-gradient(circle, rgba(0,0,0,.16), rgba(0,0,0,.02) 70%); }
+.landing-float::before { background: radial-gradient(circle at 31% 15%, rgba(255,255,255,.31), transparent 8%), linear-gradient(145deg, #333 0%, #101010 47%, #000 100%); box-shadow: inset 15px 9px 25px rgba(255,255,255,.12), inset -22px -20px 32px rgba(0,0,0,.78), 30px 45px 70px rgba(0,0,0,.30); }
+.landing-float::after { border-color: rgba(227,38,38,.66); background: radial-gradient(ellipse, rgba(227,38,38,.25), rgba(0,0,0,.13) 46%, transparent 70%); box-shadow: 0 28px 38px rgba(0,0,0,.24), inset 0 0 0 15px rgba(255,255,255,.15), inset 0 0 0 16px rgba(227,38,38,.19); }
+.landing-dashboard { background: linear-gradient(145deg, rgba(255,255,255,.97), rgba(225,225,225,.88)); box-shadow: 28px 35px 65px rgba(0,0,0,.25), inset 0 1px rgba(255,255,255,.96); }
+.landing-dashboard::before { background: rgba(227,38,38,.36); }
+.landing-citizen-card { background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(228,228,228,.78)); box-shadow: 0 22px 42px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.92); }
+
+.portal-shell { background: radial-gradient(circle at 90% 5%, rgba(227,38,38,.15), transparent 24rem), radial-gradient(circle at 42% 100%, rgba(0,0,0,.09), transparent 30rem), linear-gradient(145deg, #fff 0%, #f2f2f2 48%, #e8e8e8 100%); }
+.portal-shell::before { background-image: linear-gradient(rgba(0,0,0,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.045) 1px, transparent 1px); }
+.portal-sidebar { background: radial-gradient(circle at 110% -8%, rgba(227,38,38,.40), transparent 16rem), radial-gradient(circle at -12% 85%, rgba(255,255,255,.10), transparent 15rem), linear-gradient(165deg, #202020 0%, #0d0d0d 48%, #000 100%); box-shadow: 24px 0 55px rgba(0,0,0,.22), inset -1px 0 rgba(255,255,255,.08); }
+.portal-sidebar::after { border-color: rgba(255,255,255,.24); }
+.portal-sidebar nav a.bg-marigold-300 { background: linear-gradient(135deg, #ef4141, #bd1414); color: #fff; box-shadow: 0 11px 24px rgba(173,16,16,.34), inset 0 1px rgba(255,255,255,.28); }
+.portal-topbar { background: rgba(255,255,255,.73) !important; border-bottom-color: rgba(0,0,0,.10) !important; box-shadow: 0 10px 25px rgba(0,0,0,.05); }
+.portal-orbit { border-color: rgba(0,0,0,.14); }
+.portal-orbit-one::after { background: #e32626; box-shadow: 0 0 0 7px rgba(227,38,38,.15), 0 10px 22px rgba(180,20,20,.28); }
+.portal-orbit-two::after { background: #191919; box-shadow: 0 0 0 7px rgba(0,0,0,.11), 0 10px 22px rgba(0,0,0,.18); }
+.portal-page :is(section.rounded-3xl, article.rounded-3xl, .rounded-3xl.bg-white, .rounded-2xl.bg-white) { border-color: rgba(0,0,0,.10) !important; background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(238,238,238,.82)) !important; box-shadow: 0 19px 38px rgba(0,0,0,.08), 0 3px 8px rgba(0,0,0,.04), inset 0 1px rgba(255,255,255,.94) !important; }
+@media (hover: hover) and (min-width: 768px) { .portal-page :is(section.rounded-3xl, article.rounded-3xl, .rounded-3xl.bg-white, .rounded-2xl.bg-white):hover { border-color: rgba(227,38,38,.32) !important; box-shadow: 0 28px 54px rgba(0,0,0,.13), 0 4px 11px rgba(0,0,0,.05), inset 0 1px rgba(255,255,255,.94) !important; } }
+.portal-page :is(input, textarea, select) { border-color: rgba(0,0,0,.16) !important; background: rgba(255,255,255,.84) !important; }
+.portal-page :is(input, textarea, select):focus { border-color: rgba(227,38,38,.75) !important; box-shadow: 0 0 0 4px rgba(227,38,38,.12), inset 0 1px rgba(255,255,255,.9) !important; }
+.portal-page button.bg-panchayat-700, .portal-page button.bg-panchayat-600, .portal-page a.bg-panchayat-700, .portal-page button.bg-marigold-500, .portal-page button.bg-marigold-300, .portal-page a.bg-marigold-500 { background-image: linear-gradient(135deg, #f04747, #c71515); color: #fff; box-shadow: 0 10px 20px rgba(180,20,20,.22), inset 0 1px rgba(255,255,255,.18); }
+.portal-page table thead { background: rgba(234,234,234,.72) !important; }
+.portal-page table tbody tr:hover { background: rgba(227,38,38,.045); }
+
+.dashboard-command::before { background: radial-gradient(circle at 84% 20%, rgba(227,38,38,.24), transparent 21rem), radial-gradient(circle at 22% 85%, rgba(0,0,0,.11), transparent 19rem), linear-gradient(135deg, rgba(0,0,0,.10), rgba(255,255,255,0)); }
+.dashboard-command .dashboard-hero { background-image: radial-gradient(circle at 82% 14%, rgba(227,38,38,.31), transparent 23rem), radial-gradient(circle at 15% 110%, rgba(255,255,255,.08), transparent 20rem), linear-gradient(132deg, #080808 0%, #202020 56%, #343434 100%); box-shadow: 0 28px 58px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.16); }
+.dashboard-command .dashboard-hero .bg-marigold-300 { background: linear-gradient(135deg, #ffaaaa, #e32626); }
+
+.assistant-shell { border-color: rgba(227,38,38,.30) !important; background: linear-gradient(145deg, #fff, #e9e9e9) !important; box-shadow: 0 26px 58px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.90) !important; }
+.assistant-shell > :first-child { background-image: radial-gradient(circle at 84% 5%, rgba(227,38,38,.42), transparent 13rem), linear-gradient(135deg, #0d0d0d, #252525 68%, #454545) !important; }
+.assistant-shell .chat-surface { background-color: #f0f0f0; background-image: radial-gradient(rgba(0,0,0,.13) .72px, transparent .72px), linear-gradient(135deg, rgba(255,255,255,.55), rgba(224,224,224,.72)); }
+.assistant-shell .chat-surface .bg-panchayat-700 { background-image: linear-gradient(135deg, #ef4545, #c71515) !important; box-shadow: 0 8px 18px rgba(180,20,20,.22); }
+.assistant-orb { background: linear-gradient(145deg, #ffd0d0, #e32626) !important; box-shadow: 0 9px 18px rgba(0,0,0,.25), inset 0 1px rgba(255,255,255,.72); }
+.chat-surface { background-color: #f0f0f0; background-image: radial-gradient(rgba(0,0,0,.12) .7px, transparent .7px); }
+
+:is(.login-page, .register-page, .forgot-password-page) { background: radial-gradient(circle at 12% 10%, rgba(227,38,38,.28), transparent 25rem), radial-gradient(circle at 92% 79%, rgba(0,0,0,.15), transparent 27rem), linear-gradient(145deg, #e9e9e9 0%, #fff 47%, #e3e3e3 100%) !important; }
+:is(.login-page, .register-page, .forgot-password-page)::before { border-color: rgba(227,38,38,.24); box-shadow: inset 0 0 0 20px rgba(227,38,38,.04), 0 35px 70px rgba(0,0,0,.10); }
+:is(.login-page, .register-page, .forgot-password-page) > section:first-of-type { background: radial-gradient(circle at 110% 4%, rgba(227,38,38,.48), transparent 18rem), radial-gradient(circle at -4% 100%, rgba(255,255,255,.09), transparent 20rem), linear-gradient(155deg, #242424, #0d0d0d 54%, #000) !important; box-shadow: 0 32px 65px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.15) !important; }
+:is(.login-page, .register-page, .forgot-password-page) .login-card, :is(.login-page, .register-page, .forgot-password-page) .rounded-\[2rem\].bg-white\/85 { background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(230,230,230,.80)) !important; box-shadow: 27px 32px 65px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.98) !important; }
+:is(.login-page, .register-page, .forgot-password-page) :is(input, textarea, select) { border-color: rgba(0,0,0,.18) !important; }
+:is(.login-page, .register-page, .forgot-password-page) button.bg-panchayat-700 { background-image: linear-gradient(135deg, #f04747, #c71515); box-shadow: 0 12px 24px rgba(180,20,20,.22), inset 0 1px rgba(255,255,255,.18); }
+
+/* Dashboard studio: a denser, intentional command surface rather than a
+   stack of generic cards. Both citizen and office roles share the same
+   composition but see role-appropriate actions and status. */
+.dashboard-studio { position: relative; }
+.dashboard-studio::before { content: ''; position: absolute; z-index: -1; inset: -1rem -1rem auto; height: 24rem; border-radius: 2.5rem; background: radial-gradient(circle at 76% 18%, rgba(227,38,38,.12), transparent 18rem), linear-gradient(135deg, rgba(0,0,0,.065), transparent 65%); pointer-events: none; }
+.dashboard-topline { padding: .45rem .15rem .2rem; }
+.dashboard-live-pill { display: inline-flex; align-items: center; gap: .52rem; border: 1px solid rgba(0,0,0,.11); border-radius: 999px; background: rgba(255,255,255,.72); box-shadow: 0 7px 20px rgba(0,0,0,.055), inset 0 1px rgba(255,255,255,.9); padding: .58rem .9rem; font-size: .7rem; font-weight: 700; color: rgba(0,0,0,.62); }
+.dashboard-live-pill span { width: .45rem; height: .45rem; border-radius: 99px; background: #e32626; box-shadow: 0 0 0 4px rgba(227,38,38,.13); animation: dashboardSignal 1.8s ease-in-out infinite; }
+.dashboard-studio-hero, .dashboard-citizen-hero { min-height: 290px; border: 1px solid rgba(255,255,255,.15); background: radial-gradient(circle at 92% 12%, rgba(227,38,38,.36), transparent 18rem), radial-gradient(circle at 15% 115%, rgba(255,255,255,.10), transparent 20rem), linear-gradient(130deg, #050505 0%, #151515 57%, #353535 100%); box-shadow: 0 30px 64px rgba(0,0,0,.26), inset 0 1px rgba(255,255,255,.18); }
+.dashboard-citizen-hero { background: radial-gradient(circle at 87% 13%, rgba(227,38,38,.32), transparent 17rem), radial-gradient(circle at 15% 115%, rgba(255,255,255,.11), transparent 20rem), linear-gradient(130deg, #090909, #242424 60%, #454545); }
+.dashboard-studio-grid { position: absolute; inset: 0; opacity: .20; background-image: linear-gradient(rgba(255,255,255,.30) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.30) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, transparent, black 45%, transparent); }
+.dashboard-kicker { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid rgba(255,255,255,.15); border-radius: 999px; background: rgba(255,255,255,.08); padding: .45rem .7rem; font-size: .62rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; color: #fff; backdrop-filter: blur(10px); }
+.dashboard-red-link { border-radius: .9rem; background: linear-gradient(135deg, #f04747, #c71515); padding: .85rem 1rem; font-size: .82rem; font-weight: 800; color: #fff; box-shadow: 0 12px 24px rgba(174,14,14,.33), inset 0 1px rgba(255,255,255,.22); transition: transform .25s ease, box-shadow .25s ease; }
+.dashboard-red-link:hover { transform: translateY(-2px); box-shadow: 0 17px 28px rgba(174,14,14,.42), inset 0 1px rgba(255,255,255,.22); }
+.dashboard-radar-card { position: relative; isolation: isolate; min-height: 232px; overflow: hidden; border: 1px solid rgba(255,255,255,.15); border-radius: 1.55rem; background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.045)); padding: 1.3rem; box-shadow: inset 0 1px rgba(255,255,255,.14); backdrop-filter: blur(16px); }
+.dashboard-radar { position: absolute; z-index: -1; right: -1rem; bottom: -4rem; width: 15rem; height: 15rem; border: 1px solid rgba(255,255,255,.17); border-radius: 50%; box-shadow: inset 0 0 0 2.5rem rgba(255,255,255,.025), inset 0 0 0 5rem rgba(255,255,255,.025); transform: rotateX(58deg) rotateZ(-16deg); }
+.dashboard-radar span { position: absolute; inset: 25%; border: 1px solid rgba(227,38,38,.65); border-radius: 50%; box-shadow: 0 0 0 10px rgba(227,38,38,.075); }
+.dashboard-radar i { position: absolute; left: 45%; top: 17%; width: .7rem; height: .7rem; border-radius: 99px; background: #ef4545; box-shadow: 0 0 0 7px rgba(239,69,69,.13), 0 0 24px rgba(239,69,69,.85); }
+.dashboard-metric { min-height: 156px; box-shadow: 0 13px 27px rgba(0,0,0,.06), inset 0 1px rgba(255,255,255,.95); transition: transform .26s cubic-bezier(.2,.8,.2,1), box-shadow .26s ease; }
+.dashboard-metric:hover { transform: translateY(-5px) rotateX(.55deg); box-shadow: 0 23px 38px rgba(0,0,0,.12), inset 0 1px rgba(255,255,255,.95); }
+.dashboard-insights-grid > div { border-color: rgba(0,0,0,.10) !important; border-radius: 1.8rem !important; background: linear-gradient(145deg, rgba(255,255,255,.97), rgba(235,235,235,.83)) !important; box-shadow: 0 19px 38px rgba(0,0,0,.07), inset 0 1px rgba(255,255,255,.9) !important; }
+.dashboard-workflow { border: 1px solid rgba(0,0,0,.11); background: linear-gradient(135deg, #121212, #242424 64%, #373737); box-shadow: 0 25px 50px rgba(0,0,0,.19), inset 0 1px rgba(255,255,255,.14); color: #fff; }
+.dashboard-workflow .text-ink { color: #fff !important; }
+.dashboard-workflow .text-ink\/55 { color: rgba(255,255,255,.62) !important; }
+.dashboard-outline-link { align-items: center; gap: .45rem; border: 1px solid rgba(255,255,255,.25); border-radius: .8rem; padding: .62rem .75rem; font-size: .72rem; font-weight: 800; color: #fff; transition: background .2s ease, border-color .2s ease; }
+.dashboard-outline-link:hover { border-color: #ef4545; background: rgba(227,38,38,.18); }
+.dashboard-workflow-row { min-height: 166px; border: 1px solid rgba(255,255,255,.12); border-radius: 1.35rem; padding: 1rem; color: #fff; box-shadow: inset 0 1px rgba(255,255,255,.12); }
+.dashboard-workflow-red { background: linear-gradient(145deg, #e53737, #a91212); box-shadow: 0 13px 24px rgba(148,10,10,.24), inset 0 1px rgba(255,255,255,.2); }
+.dashboard-workflow-dark { background: linear-gradient(145deg, #444, #1b1b1b); }
+.dashboard-workflow-light { background: linear-gradient(145deg, #f4f4f4, #cfcfcf); color: #101010; }
+.dashboard-workflow-light .text-white\/62 { color: rgba(0,0,0,.60) !important; }
+.dashboard-workflow-light .bg-white\/12 { background: #101010; color: #fff; }
+.dashboard-action { min-height: 175px; box-shadow: 0 14px 28px rgba(0,0,0,.065), inset 0 1px rgba(255,255,255,.92); transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease; }
+.dashboard-action:hover { transform: translateY(-5px) rotateX(.55deg); border-color: rgba(227,38,38,.38); box-shadow: 0 24px 40px rgba(0,0,0,.13), inset 0 1px rgba(255,255,255,.95); }
+.dashboard-action-primary { background: radial-gradient(circle at 87% 10%, rgba(255,255,255,.18), transparent 11rem), linear-gradient(135deg, #ee4343, #bd1212) !important; box-shadow: 0 17px 31px rgba(174,14,14,.29), inset 0 1px rgba(255,255,255,.20); }
+.dashboard-profile-orb { position: relative; display: grid; min-height: 220px; place-items: center; overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 1.55rem; background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); box-shadow: inset 0 1px rgba(255,255,255,.14); }
+.dashboard-profile-rings { position: absolute; width: 16rem; height: 16rem; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; transform: rotateX(64deg) rotateZ(-14deg); }
+.dashboard-profile-rings i { position: absolute; border: 1px solid rgba(227,38,38,.60); border-radius: 50%; }
+.dashboard-profile-rings i:nth-child(1) { inset: 18%; }.dashboard-profile-rings i:nth-child(2) { inset: 35%; }.dashboard-profile-rings i:nth-child(3) { left: 49%; top: 7%; width: .65rem; height: .65rem; border: 0; background: #ef4545; box-shadow: 0 0 0 7px rgba(239,69,69,.16), 0 0 28px rgba(239,69,69,.8); }
+@keyframes dashboardSignal { 0%,100% { transform: scale(1); box-shadow: 0 0 0 4px rgba(227,38,38,.13); } 50% { transform: scale(1.15); box-shadow: 0 0 0 7px rgba(227,38,38,0); } }

@@ -1,0 +1,8 @@
+# Single-page-app fallback.
+#
+# The router is a BrowserRouter, so /applications, /certificates, /chat and
+# every other route exist only in the browser - there is no such file on the
+# static host. Without this rule, a refresh or a pasted deep link returns the
+# host's own 404 page instead of the app. Netlify and Render Static Sites both
+# read this file; the 200 (not 301) keeps the URL the user actually requested.
+/*    /index.html   200

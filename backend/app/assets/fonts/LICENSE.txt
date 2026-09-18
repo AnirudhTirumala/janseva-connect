@@ -1,0 +1,5 @@
+These fonts (Liberation Serif family) are from the Liberation Fonts
+project (https://github.com/liberationfonts), licensed under the SIL
+Open Font License 1.1, which permits bundling, embedding, and
+redistribution with this application. Full license text:
+https://scripts.sil.org/OFL

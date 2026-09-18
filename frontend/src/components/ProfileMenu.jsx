@@ -1,0 +1,64 @@
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { membersApi } from '../api/endpoints'
+import { useAuth } from '../context/AuthContext'
+import { formatApiError } from '../utils/formatApiError'
+import Modal from './Modal'
+import {
+  ChevronDown, User, Settings, HelpCircle, KeyRound, LogOut, Trash2, X,
+  Mail, Phone, Clock, Pencil, MapPin, ShieldCheck, BadgeCheck, UserRound,
+} from 'lucide-react'
+
+const fmtDate = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Not added'
+const maskAadhaar = (value) => value ? `•••• •••• ${value.slice(-4)}` : 'Not added'
+
+function Detail({ label, value, wide = false }) {
+  return <div className={`rounded-xl bg-[#fbfaf7] px-3.5 py-3 ${wide ? 'sm:col-span-2' : ''}`}><dt className="text-[10px] font-bold uppercase tracking-[.11em] text-ink/45">{label}</dt><dd className="mt-1 break-words text-sm font-semibold text-panchayat-900">{value || 'Not added'}</dd></div>
+}
+
+function AccountEditModal({ user, onClose }) {
+  const { updateUser } = useAuth()
+  const [form, setForm] = useState({ full_name: user?.full_name || '', phone: user?.phone || '' })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const submit = async (event) => {
+    event.preventDefault(); setSaving(true); setError('')
+    try { await updateUser(form); onClose() } catch (err) { setError(formatApiError(err, 'Could not update your profile.')) } finally { setSaving(false) }
+  }
+  const input = 'mt-1.5 w-full rounded-xl border border-ink/10 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-panchayat-500 focus:ring-4 focus:ring-panchayat-50'
+  return <Modal onClose={onClose} maxWidth="max-w-md"><form onSubmit={submit} className="rounded-3xl bg-paper p-6 shadow-2xl"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-marigold-600">Account details</p><h2 className="mt-1 font-display text-2xl text-panchayat-900">Edit profile</h2></div><button type="button" onClick={onClose} aria-label="Close" className="grid h-9 w-9 place-items-center rounded-full text-ink/55 hover:bg-panchayat-50"><X size={18} /></button></div><p className="mt-3 text-sm leading-6 text-ink/55">Your office jurisdiction and verified email are protected by the administrator and cannot be changed here.</p><label className="mt-5 block text-[11px] font-bold uppercase tracking-[.1em] text-ink/55">Full name<input required value={form.full_name} onChange={(event) => setForm({ ...form, full_name: event.target.value })} className={input} /></label><label className="mt-4 block text-[11px] font-bold uppercase tracking-[.1em] text-ink/55">Mobile number<input value={form.phone} inputMode="tel" onChange={(event) => setForm({ ...form, phone: event.target.value })} className={input} /></label>{error && <p className="mt-4 rounded-xl bg-brick-100 px-3 py-2 text-sm text-brick-600">{error}</p>}<div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2.5 text-sm font-semibold text-ink/55">Cancel</button><button disabled={saving} className="rounded-xl bg-panchayat-700 px-5 py-2.5 text-sm font-semibold text-paper hover:bg-panchayat-600 disabled:opacity-50">{saving ? 'Saving…' : 'Save changes'}</button></div></form></Modal>
+}
+
+function ProfileModal({ user, roleLabel, onClose, onEdit }) {
+  const [member, setMember] = useState(null)
+  const [profileReady, setProfileReady] = useState(user?.role !== 'citizen')
+  useEffect(() => {
+    if (user?.role !== 'citizen') return
+    membersApi.getMe().then((res) => setMember(res.data)).catch(() => setMember(null)).finally(() => setProfileReady(true))
+  }, [user?.id, user?.role])
+  const location = member || user || {}
+  const state = location.state || 'Andhra Pradesh'
+  const jurisdiction = user?.role === 'admin' && user?.jurisdiction_level === 'super'
+    ? 'Superadmin'
+    : user?.role === 'admin' && (!user?.jurisdiction_level || user.jurisdiction_level === 'state')
+    ? 'State administrator' : user?.jurisdiction_level === 'mandal' ? 'Mandal team' : user?.district ? 'District team' : roleLabel
+  return <Modal onClose={onClose} maxWidth="max-w-2xl"><div className="max-h-[92vh] overflow-y-auto rounded-3xl bg-paper shadow-2xl pp-scrollbar"><div className="relative overflow-hidden bg-panchayat-700 px-6 py-6 text-paper"><div className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-marigold-300/15" /><div className="relative flex items-start justify-between gap-4"><div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-marigold-300 font-display text-lg text-panchayat-900">{user?.full_name?.[0]?.toUpperCase() || '?'}</span><div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-marigold-300">Secure profile</p><h2 className="mt-1 font-display text-2xl">{user?.full_name || 'Your profile'}</h2><p className="mt-1 text-xs text-panchayat-100/70">{jurisdiction}</p></div></div><button onClick={onClose} aria-label="Close profile" className="grid h-9 w-9 place-items-center rounded-full bg-white/8 text-paper hover:bg-white/15"><X size={18} /></button></div></div><div className="p-6"><div className="mb-4 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-marigold-600">{user?.role === 'citizen' ? 'Household and account details' : 'Account and assigned jurisdiction'}</p><h3 className="mt-1 font-display text-xl text-panchayat-900">Profile details</h3></div><button onClick={onEdit} className="inline-flex items-center gap-2 rounded-xl border border-panchayat-100 bg-panchayat-50 px-3.5 py-2 text-xs font-bold text-panchayat-700 hover:bg-panchayat-100"><Pencil size={14} /> Edit profile</button></div>{!profileReady ? <p className="rounded-2xl bg-panchayat-50 p-4 text-sm text-panchayat-700">Loading your household details…</p> : <dl className="grid gap-3 sm:grid-cols-2"><Detail label="Full name" value={member?.full_name || user?.full_name} /><Detail label="Portal role" value={roleLabel} /><Detail label="Email ID" value={user?.email} /><Detail label="Mobile number" value={member?.phone || user?.phone} />{user?.role === 'citizen' && <><Detail label="Father / husband name" value={member?.father_or_husband_name} /><Detail label="Date of birth" value={fmtDate(member?.date_of_birth)} /><Detail label="Gender" value={member?.gender} /><Detail label="Aadhaar number" value={maskAadhaar(member?.aadhaar_number)} /></>}<Detail label="State" value={state} /><Detail label="District" value={location.district || (jurisdiction === 'State administrator' ? 'All districts' : null)} /><Detail label="Mandal" value={location.mandal || (jurisdiction === 'State administrator' ? 'All mandals' : null)} /><Detail label="Village / town" value={location.village} />{user?.role === 'citizen' && <><Detail wide label="Address" value={member?.address} /><Detail label="Annual income" value={member?.annual_income ? `₹${Number(member.annual_income).toLocaleString('en-IN')}` : null} /><Detail label="Profile status" value={member ? 'Household profile linked' : 'Finish setup from dashboard'} /></>}</dl>}<div className="mt-5 flex items-center gap-2 rounded-2xl border border-panchayat-100 bg-panchayat-50 px-4 py-3 text-xs leading-5 text-panchayat-700"><ShieldCheck size={16} className="shrink-0" />Email, role, and assigned jurisdiction stay protected. Update your personal details whenever they change.</div></div></div></Modal>
+}
+
+function SettingsModal({ onClose, onChangePassword }) {
+  const { i18n } = useTranslation(); const langLabel = { en: 'English', hi: 'हिंदी', te: 'తెలుగు' }[i18n.language] || i18n.language
+  return <Modal onClose={onClose} maxWidth="max-w-sm"><div className="rounded-3xl bg-paper p-6 shadow-2xl"><div className="flex items-center justify-between"><h2 className="font-display text-xl text-panchayat-900">Settings</h2><button onClick={onClose} aria-label="Close settings"><X size={18} /></button></div><div className="mt-4 flex items-center justify-between rounded-xl bg-[#fbfaf7] px-3 py-3 text-sm"><span>Language</span><span className="font-semibold text-panchayat-700">{langLabel}</span></div><button onClick={() => { onClose(); onChangePassword() }} className="mt-3 flex w-full items-center gap-3 rounded-xl border border-ink/10 px-3 py-3 text-sm hover:bg-panchayat-50"><KeyRound size={16} /> Change password</button></div></Modal>
+}
+
+function HelpContactModal({ onClose }) {
+  return <Modal onClose={onClose} maxWidth="max-w-sm"><div className="rounded-3xl bg-paper p-6 shadow-2xl"><div className="flex items-center justify-between"><h2 className="font-display text-xl text-panchayat-900">Help &amp; contact</h2><button onClick={onClose} aria-label="Close help"><X size={18} /></button></div><div className="mt-5 space-y-4 text-sm"><div className="flex gap-3"><Mail size={16} className="text-marigold-600" /><a href="mailto:panchayat@gov.in" className="text-panchayat-700 hover:underline">panchayat@gov.in</a></div><div className="flex gap-3"><Phone size={16} className="text-marigold-600" /><span>Contact your local Panchayat office</span></div><div className="flex gap-3"><Clock size={16} className="text-marigold-600" /><span>Monday – Saturday, 10:00 AM – 5:00 PM</span></div></div></div></Modal>
+}
+
+export default function ProfileMenu({ user, roleLabel, onChangePassword, onDeleteAccount, onSignOut }) {
+  const [open, setOpen] = useState(false); const [modal, setModal] = useState(null); const ref = useRef(null); const navigate = useNavigate()
+  const openFullProfileEditor = () => { sessionStorage.setItem('pp_edit_profile', 'true'); setModal(null); navigate('/') }
+  useEffect(() => { const close = (event) => { if (ref.current && !ref.current.contains(event.target)) setOpen(false) }; document.addEventListener('mousedown', close); return () => document.removeEventListener('mousedown', close) }, [])
+  const startEdit = () => user?.role === 'citizen' ? openFullProfileEditor() : setModal('account-edit')
+  return <div className="relative" ref={ref}><button onClick={() => setOpen(!open)} className="group flex items-center gap-2 rounded-xl border border-transparent py-1 pl-1 pr-2 transition hover:border-panchayat-100 hover:bg-panchayat-50"><span className="grid h-8 w-8 place-items-center rounded-lg bg-panchayat-700 text-sm font-bold text-paper transition group-hover:rotate-3">{user?.full_name?.[0]?.toUpperCase() || '?'}</span><span className="hidden max-w-32 truncate text-sm font-semibold text-panchayat-900 sm:inline">{user?.full_name}</span><ChevronDown size={14} className="text-ink/50" /></button>{open && <div className="absolute right-0 z-50 mt-2 w-60 origin-top-right animate-scale-in overflow-hidden rounded-2xl border border-ink/10 bg-paper shadow-2xl"><div className="bg-panchayat-50 px-4 py-3"><p className="truncate text-sm font-bold text-panchayat-900">{user?.full_name}</p><p className="mt-0.5 text-xs text-panchayat-700">{roleLabel}</p></div><button onClick={() => { setModal('profile'); setOpen(false) }} className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-panchayat-50"><UserRound size={16} /> Profile</button><button onClick={() => { setModal('settings'); setOpen(false) }} className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-panchayat-50"><Settings size={16} /> Settings</button><button onClick={() => { setModal('help'); setOpen(false) }} className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-panchayat-50"><HelpCircle size={16} /> Help &amp; contact</button><button onClick={() => { setOpen(false); onChangePassword() }} className="flex w-full items-center gap-3 border-t border-ink/5 px-4 py-3 text-left text-sm hover:bg-panchayat-50"><KeyRound size={16} /> Change password</button>{user?.role === 'citizen' && <button onClick={() => { setOpen(false); onDeleteAccount() }} className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-brick-600 hover:bg-brick-100/40"><Trash2 size={16} /> Delete account</button>}<button onClick={() => { setOpen(false); onSignOut() }} className="flex w-full items-center gap-3 border-t border-ink/5 px-4 py-3 text-left text-sm hover:bg-panchayat-50"><LogOut size={16} /> Sign out</button></div>}{modal === 'profile' && <ProfileModal user={user} roleLabel={roleLabel} onClose={() => setModal(null)} onEdit={startEdit} />}{modal === 'account-edit' && <AccountEditModal user={user} onClose={() => setModal(null)} />}{modal === 'settings' && <SettingsModal onClose={() => setModal(null)} onChangePassword={onChangePassword} />}{modal === 'help' && <HelpContactModal onClose={() => setModal(null)} />}</div>
+}

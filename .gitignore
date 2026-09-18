@@ -1,0 +1,63 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Local databases, including hand-made backups whose suffix comes after the
+# extension (panchayat.db.bak-..., panchayat.pre-reset-...db) - "*.db" alone
+# does not match those, and one of them was tracked with real citizen rows.
+*.db
+*.db.*
+*.sqlite
+*.sqlite3
+backend/panchayat*
+
+# Generated citizen data (never commit files uploaded to a live portal).
+# NOTE: adding a rule here does not untrack files already committed - use
+# `git rm -r --cached <path>` for those, which is how the 158 certificate
+# PDFs and uploaded ID documents in this repo's history were removed from
+# the index. They remain in earlier commits; see README section 8.
+backend/uploaded_documents/
+backend/app/uploaded_documents/
+backend/app/generated_certificates/
+backend/app/storage/
+backend/ui-test-storage/
+
+# Local end-to-end harness (throwaway database, storage, logs and config)
+backend/.env.e2e
+backend/e2e.db
+backend/e2e-storage/
+backend/e2e-backend.log
+frontend/dev-server.log
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+# Local backend logs
+backend/*.log
+
+# Local Python/runtime files
+backend/.python-version
+backend/runtime.txt
+
+# Local development/test scripts
+backend/dev_no_email.py
+backend/e2e_env.py
+backend/run_e2e_backend.py
+backend/seed_e2e.py
+backend/e2e_api_check.py
