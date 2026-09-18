@@ -1,108 +1,93 @@
-# Render blueprint for JanSeva Connect.
-#
-# This encodes the deployment described in DEPLOYMENT.md so the backend,
-# the static frontend, and a managed PostgreSQL instance are provisioned
-# together instead of being wired up by hand each time.
-#
-# Values marked `sync: false` are deliberately NOT in this file: they are
-# secrets (SECRET_KEY, SMTP credentials, GROQ_API_KEY) and are entered once
-# in the Render dashboard. Committing them here would put every production
-# credential in the repository.
-#
-# After the first deploy, open the backend service's shell and run:
-#     python seed.py
-# It prints the generated administrator password exactly once - save it.
+# Render Blueprint for JanSeva Connect - FREE deployment
 
 databases:
   - name: janseva-db
     databaseName: janseva
     user: janseva
-    plan: basic-256mb
+    plan: free
 
 services:
+  # FastAPI backend
   - type: web
     name: janseva-api
     runtime: python
-    plan: starter
+    plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    # --proxy-headers is required behind Render's load balancer so the app
-    # sees the real client IP; without it every request looks like it came
-    # from the proxy and the per-IP rate limits apply to everyone at once.
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
     healthCheckPath: /api/health
-    # Uploaded identity documents and generated certificate PDFs must
-    # outlive a redeploy. Render's container filesystem does not.
-    disk:
-      name: janseva-storage
-      mountPath: /var/data/janseva
-      sizeGB: 10
+
     envVars:
-      # Pinned deliberately. Render's default moved to 3.13, for which some
-      # pinned wheels (psycopg2-binary in particular) historically had no
-      # build - an unpinned runtime turns an unrelated upstream change into
-      # a failed deploy. backend/.python-version says the same thing for
-      # hosts that read that instead.
       - key: PYTHON_VERSION
         value: 3.12.7
+
       - key: ENVIRONMENT
         value: production
+
       - key: STORAGE_PATH
-        value: /var/data/janseva
+        value: /tmp/janseva
+
       - key: DATABASE_URL
         fromDatabase:
           name: janseva-db
           property: connectionString
+
       - key: SECRET_KEY
         generateValue: true
-      # Both are entered by hand because they need a full origin including
-      # the scheme, and Render's fromService only yields a bare hostname.
-      # The backend refuses to start in production unless CORS_ORIGINS
-      # contains explicit https:// origins, so a hostname alone would fail.
+
       - key: CORS_ORIGINS
-        sync: false      # https://your-web.onrender.com
+        sync: false
+
       - key: ALLOWED_HOSTS
-        sync: false      # your-api.onrender.com (hostname only, no scheme)
+        sync: false
+
       - key: SMTP_HOST
         sync: false
+
       - key: SMTP_PORT
         value: "587"
+
       - key: SMTP_USER
         sync: false
+
       - key: SMTP_PASSWORD
         sync: false
+
       - key: SMTP_FROM_NAME
         value: JanSeva Connect
+
       - key: OTP_EXPIRY_MINUTES
         value: "10"
-      - key: GROQ_API_KEY
-        sync: false      # blank disables the AI assistant cleanly
 
+      - key: GROQ_API_KEY
+        sync: false
+
+  # React/Vite frontend
   - type: web
     name: janseva-web
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
+
     envVars:
-      # Needs the scheme, so it is entered by hand: https://your-api.onrender.com
       - key: VITE_API_URL
         sync: false
+
     routes:
-      # The app uses BrowserRouter, so /applications and friends exist only
-      # in the browser. Without this rewrite, refreshing any route returns
-      # Render's 404 page. (frontend/public/_redirects covers the same case
-      # for hosts that read that file instead.)
       - type: rewrite
         source: /*
         destination: /index.html
+
     headers:
       - path: /*
         name: X-Frame-Options
         value: DENY
+
       - path: /*
         name: X-Content-Type-Options
         value: nosniff
+
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
