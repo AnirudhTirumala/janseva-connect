@@ -1,5 +1,5 @@
-import smtplib
 import logging
+import httpx
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -10,38 +10,95 @@ logger = logging.getLogger("panchayat.email")
 
 def _send_email(to_email: str, subject: str, body: str, dev_label: str = "EMAIL") -> bool:
     """
-    Shared low-level sender used by every email in the app. If SMTP isn't
-    configured, prints to the console instead so flows can still be tested
-    end-to-end locally before real credentials are set up.
+    Shared low-level sender.
+
+    Production on Render Free uses the Resend HTTPS API instead of SMTP,
+    because Render Free blocks outbound SMTP ports.
+    Local development can still fall back to SMTP when Resend is not configured.
     """
+    # Production/Render Free: send through Resend HTTPS API.
+    if settings.RESEND_API_KEY and settings.RESEND_FROM_EMAIL:
+        try:
+            response = httpx.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "from": settings.RESEND_FROM_EMAIL,
+                    "to": [to_email],
+                    "subject": subject,
+                    "text": body,
+                },
+                timeout=15.0,
+            )
+
+            if 200 <= response.status_code < 300:
+                return True
+
+            logger.error(
+                "Resend rejected email to %s: HTTP %s",
+                to_email,
+                response.status_code,
+            )
+            return False
+
+        except Exception:
+            logger.exception("Failed to send email to %s through Resend", to_email)
+            return False
+
+    # Local-development SMTP fallback.
     if not (settings.SMTP_HOST and settings.SMTP_USER and settings.SMTP_PASSWORD):
-        logger.warning(f"SMTP not configured - printing email to console instead.\n  To: {to_email}\n  Subject: {subject}")
-        print(f"\n[DEV MODE - {dev_label} NOT SENT] To: {to_email} | Subject: {subject}\n{body}\n")
+        logger.warning(
+            "No email provider configured - printing email to console instead.\n"
+            "  To: %s\n"
+            "  Subject: %s",
+            to_email,
+            subject,
+        )
+        print(
+            f"\n[DEV MODE - {dev_label} NOT SENT] "
+            f"To: {to_email} | Subject: {subject}\n{body}\n"
+        )
         return True
 
     try:
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
         msg = MIMEMultipart()
         msg["From"] = f"{settings.SMTP_FROM_NAME} <{settings.SMTP_USER}>"
         msg["To"] = to_email
         msg["Subject"] = subject
         msg.attach(MIMEText(body, "plain"))
 
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=15) as server:
+        with smtplib.SMTP(
+            settings.SMTP_HOST,
+            settings.SMTP_PORT,
+            timeout=15,
+        ) as server:
             server.starttls()
             server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
-            # sendmail returns a dict of recipients the server refused. It only
-            # raises when EVERY recipient is refused, so an ignored non-empty
-            # return would be reported to the caller as a successful send.
-            refused = server.sendmail(settings.SMTP_USER, [to_email], msg.as_string())
+            refused = server.sendmail(
+                settings.SMTP_USER,
+                [to_email],
+                msg.as_string(),
+            )
+
         if refused:
-            logger.error("SMTP server refused the recipient %s: %s", to_email, refused)
+            logger.error(
+                "SMTP server refused the recipient %s: %s",
+                to_email,
+                refused,
+            )
             return False
+
         return True
-    except smtplib.SMTPRecipientsRefused as exc:
-        logger.error("SMTP server rejected %s outright: %s", to_email, exc.recipients)
-        return False
+
     except Exception:
-        logger.exception(f"Failed to send email to {to_email}")
+        logger.exception("Failed to send email to %s", to_email)
         return False
 
 

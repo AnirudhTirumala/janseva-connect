@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "JanSeva Connect")
     OTP_EXPIRY_MINUTES: int = int(os.getenv("OTP_EXPIRY_MINUTES", "10"))
 
+    # Resend HTTP email API (works on Render Free)
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "")
+
     # Files containing citizen identity documents and generated certificates
     # must live on durable storage in production.  The empty default is
     # intentional: main.py refuses a production boot until the deployer has
