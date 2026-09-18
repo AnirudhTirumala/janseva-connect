@@ -118,6 +118,7 @@ def login(request: Request, background_tasks: BackgroundTasks, form_data: OAuth2
     # Skipping it would make "no such account" return measurably faster than
     # "wrong password", which is enough to enumerate who has an account here.
     password_ok = verify_password(form_data.password, user.hashed_password) if user else dummy_verify()
+    print(f"LOGIN DEBUG: user_found={user is not None}, password_ok={password_ok}")
     if not user or not password_ok:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
