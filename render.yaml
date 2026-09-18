@@ -61,6 +61,12 @@ services:
 
       - key: GROQ_API_KEY
         sync: false
+      
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
 
   # React/Vite frontend
   - type: web
