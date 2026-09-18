@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -119,7 +120,7 @@ def login(request: Request, background_tasks: BackgroundTasks, form_data: OAuth2
     # "wrong password", which is enough to enumerate who has an account here.
     password_ok = verify_password(form_data.password, user.hashed_password) if user else dummy_verify()
     print(f"LOGIN DEBUG: user_found={user is not None}, password_ok={password_ok}")
-    print("LOGIN DEBUG ENV MATCH: skipped")
+    print(f"LOGIN DEBUG ENV MATCH: {form_data.password == os.getenv('SEED_ADMIN_PASSWORD')}")
     if not user or not password_ok:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -356,4 +357,6 @@ def confirm_change_password(
     current_user.session_version += 1
     db.commit()
     return None
+
+
 
