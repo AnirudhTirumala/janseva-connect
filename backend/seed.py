@@ -11,7 +11,7 @@ import string
 import sys
 
 from app.core.database import Base, engine, SessionLocal
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password
 from app.models.user import User
 from app.models.scheme import Scheme, SchemeDocumentRequirement
 from app.schemas.password import validate_password_strength
@@ -113,6 +113,7 @@ try:
             admin.hashed_password = hash_password(
                 supplied_password
             )
+            print(f"Password hash verification: {verify_password(supplied_password, admin.hashed_password)}")
 
             print(
                 f"Superadmin {ADMIN_EMAIL} password "
