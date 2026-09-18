@@ -108,12 +108,18 @@ try:
         supplied_password = os.getenv("SEED_ADMIN_PASSWORD")
 
         if supplied_password:
-            validate_password_strength(supplied_password)
+            # Same friendly exit as resolve_password. Letting the ValueError
+            # escape here killed the script on a raw traceback, having synced
+            # nothing - so a deployer who chose a weak password was left with
+            # an unchanged password and no idea why.
+            try:
+                validate_password_strength(supplied_password)
+            except ValueError as exc:
+                print(f"ERROR: SEED_ADMIN_PASSWORD is not acceptable: {exc}")
+                print("The superadmin password was NOT changed. Choose a stronger one and re-run.")
+                sys.exit(1)
 
-            admin.hashed_password = hash_password(
-                supplied_password
-            )
-            print(f"Password hash verification: {verify_password(supplied_password, admin.hashed_password)}")
+            admin.hashed_password = hash_password(supplied_password)
 
             print(
                 f"Superadmin {ADMIN_EMAIL} password "
