@@ -1,4 +1,3 @@
-```python
 import logging
 
 from app.core.config import settings
@@ -498,4 +497,3 @@ def send_issue_received_email(
         body,
         dev_label="ISSUE RECEIVED EMAIL",
     )
-```
