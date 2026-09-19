@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 module.exports = async (req, res) => {
   // Allow only POST requests
