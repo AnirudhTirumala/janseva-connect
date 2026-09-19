@@ -1,3 +1,4 @@
+```python
 import os
 import secrets
 from pathlib import Path
@@ -25,6 +26,10 @@ class Settings(BaseSettings):
     SMTP_USER: str = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
     SMTP_FROM_NAME: str = os.getenv("SMTP_FROM_NAME", "JanSeva Connect")
+
+    EMAIL_API_URL: str = os.getenv("EMAIL_API_URL", "")
+    EMAIL_API_SECRET: str = os.getenv("EMAIL_API_SECRET", "")
+
     OTP_EXPIRY_MINUTES: int = int(os.getenv("OTP_EXPIRY_MINUTES", "10"))
 
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
@@ -87,3 +92,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+```
