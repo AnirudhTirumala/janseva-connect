@@ -1,5 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
@@ -339,10 +339,13 @@ def download_approval_pdf(
     scheme = db.query(Scheme).filter(Scheme.id == application.scheme_id).first()
     reviewer = db.query(User).filter(User.id == application.reviewed_by_id).first() if application.reviewed_by_id else None
 
-    file_path = generate_approval_pdf(application, member, scheme, reviewer.full_name if reviewer else "JanSeva Connect Office")
+    pdf_content = generate_approval_pdf(application, member, scheme, reviewer.full_name if reviewer else "JanSeva Connect Office")
 
-    return FileResponse(
-        file_path,
+    return Response(
+        content=pdf_content,
         media_type="application/pdf",
-        filename=f"approval_{application.id}.pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="approval_{application.id}.pdf"'
+        },
     )
+

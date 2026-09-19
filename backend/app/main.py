@@ -33,8 +33,8 @@ if settings.is_production:
         startup_errors.append("SECRET_KEY must be explicitly configured and at least 32 characters long")
     if settings.DATABASE_URL.startswith("sqlite"):
         startup_errors.append("DATABASE_URL must point to managed PostgreSQL or MySQL, not SQLite")
-    if not settings.STORAGE_PATH.strip():
-        startup_errors.append("STORAGE_PATH must point to a mounted persistent volume")
+    if not settings.supabase_storage_is_configured:
+        startup_errors.append("SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_DOCUMENTS_BUCKET, and SUPABASE_CERTIFICATES_BUCKET must be configured")
     if not (settings.SMTP_HOST and settings.SMTP_USER and settings.SMTP_PASSWORD):
         startup_errors.append("SMTP_HOST, SMTP_USER, and SMTP_PASSWORD must be configured for OTP delivery")
     if (
@@ -51,11 +51,7 @@ if settings.is_production:
             "Refusing insecure production startup: %s", "; ".join(startup_errors)
         )
         sys.exit(1)
-    try:
-        Path(settings.storage_path).mkdir(parents=True, exist_ok=True)
-    except OSError as exc:
-        logger.critical("Persistent STORAGE_PATH is not writable: %s", exc)
-        sys.exit(1)
+
 
 # Creates tables on startup if they don't exist yet.
 # For a real production rollout you'd swap this for Alembic migrations,

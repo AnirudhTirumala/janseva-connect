@@ -1,11 +1,12 @@
 import secrets
 from pathlib import Path
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.core.dependencies import get_current_user, require_roles
 from app.core.timeutils import utcnow
 from app.models.user import User
@@ -15,7 +16,8 @@ from app.models.certificate_request import CertificateRequest
 from app.models.certificate_type import CertificateType
 from app.schemas.certificate import CertificateCreate, CertificateOut, CertificateRequestCreate, CertificateRequestOut, CertificateRequestReview
 from app.schemas.certificate_type import CertificateTypeCreate, CertificateTypeOut, CertificateTypeUpdate
-from app.utils.pdf_generator import delete_certificate_file, generate_certificate_pdf, safe_certificate_path
+from app.utils.pdf_generator import certificate_dir, delete_certificate_file, generate_certificate_pdf, safe_certificate_path
+from app.utils.supabase_storage import delete_file, download_file, upload_file
 from app.utils.notifications import create_notification
 from app.utils.email_client import (
     send_certificate_issued_email, send_certificate_request_received_email,
@@ -94,12 +96,33 @@ def _issue(db: Session, member: Member, cert_type: str, issuer: User) -> Certifi
     # A collision is extraordinarily unlikely, but protect the unique database constraint.
     while db.query(Certificate.id).filter(Certificate.certificate_number == cert_number).first():
         cert_number = _generate_certificate_number(cert_type, _type_prefix(info))
-    file_path = generate_certificate_pdf(cert_number, cert_type, member, issuer.full_name, _type_name(info))
-    certificate = Certificate(member_id=member.id, certificate_type=cert_type, certificate_number=cert_number,
-                              issued_by_id=issuer.id, file_path=file_path)
+
+    pdf_content = generate_certificate_pdf(cert_number, cert_type, member, issuer.full_name, _type_name(info))
+    object_path = f"{cert_number}.pdf"
+
+    if settings.supabase_storage_is_configured:
+        file_path = upload_file(
+            settings.SUPABASE_CERTIFICATES_BUCKET,
+            object_path,
+            pdf_content,
+            "application/pdf",
+        )
+    else:
+        # Local-development fallback.
+        certificate_dir().mkdir(parents=True, exist_ok=True)
+        local_path = certificate_dir() / object_path
+        local_path.write_bytes(pdf_content)
+        file_path = str(local_path)
+
+    certificate = Certificate(
+        member_id=member.id,
+        certificate_type=cert_type,
+        certificate_number=cert_number,
+        issued_by_id=issuer.id,
+        file_path=file_path,
+    )
     db.add(certificate)
     return certificate
-
 
 @router.get("/types", response_model=List[CertificateTypeOut])
 def list_certificate_types(db: Session = Depends(get_db), _user: User = Depends(get_current_user)):
@@ -349,21 +372,39 @@ def download_certificate(
     current_user: User = Depends(get_current_user),
 ):
     certificate = db.query(Certificate).filter(Certificate.id == certificate_id).first()
-    file_path = safe_certificate_path(certificate.file_path) if certificate else None
-    if not certificate or not file_path:
+    if not certificate:
         raise HTTPException(status_code=404, detail="Certificate not found")
 
     member = db.query(Member).filter(Member.id == certificate.member_id).first()
     if not member or not can_access_member(current_user, member):
         raise HTTPException(status_code=403, detail="Not authorized to download this certificate")
 
+    if settings.supabase_storage_is_configured:
+        try:
+            content = download_file(
+                settings.SUPABASE_CERTIFICATES_BUCKET,
+                certificate.file_path,
+            )
+        except Exception:
+            raise HTTPException(status_code=404, detail="Certificate file is unavailable")
+
+        return Response(
+            content=content,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename=\"{certificate.certificate_number}.pdf\"",
+            },
+        )
+
+    file_path = safe_certificate_path(certificate.file_path)
+    if not file_path:
+        raise HTTPException(status_code=404, detail="Certificate file is unavailable")
+
     return FileResponse(
         file_path,
         media_type="application/pdf",
         filename=f"{certificate.certificate_number}.pdf",
     )
-
-
 @router.delete("/{certificate_id}", status_code=204)
 def delete_certificate(
     certificate_id: int,
@@ -383,8 +424,17 @@ def delete_certificate(
     if linked_request:
         linked_request.certificate_id = None
 
-    delete_certificate_file(certificate.file_path)
+    if settings.supabase_storage_is_configured:
+        delete_file(settings.SUPABASE_CERTIFICATES_BUCKET, certificate.file_path)
+    else:
+        delete_certificate_file(certificate.file_path)
 
     db.delete(certificate)
     db.commit()
     return None
+
+
+
+
+
+

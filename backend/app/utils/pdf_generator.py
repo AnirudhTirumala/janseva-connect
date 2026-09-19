@@ -1,3 +1,4 @@
+import io
 import math
 import os
 from pathlib import Path
@@ -13,6 +14,11 @@ from reportlab.graphics.shapes import Drawing
 from reportlab.graphics import renderPDF
 from app.core.config import settings
 from app.core.timeutils import utcnow
+from app.utils.supabase_storage import (
+    upload_file,
+    download_file,
+    delete_file,
+)
 
 # Old records retain their existing paths for read-only compatibility; newly
 # generated files always use the deployer's durable STORAGE_PATH.
@@ -311,15 +317,14 @@ CERT_TITLES = {
 }
 
 
-def generate_approval_pdf(application, member, scheme, reviewed_by_name: str) -> str:
+def generate_approval_pdf(application, member, scheme, reviewed_by_name: str) -> bytes:
     """Renders a formal, certificate-styled approval letter for a citizen
     whose scheme application was approved, matching generate_certificate_pdf's
     look so every JanSeva Connect document feels like part of one family."""
     _register_fonts()
-    filename = f"approval_{application.id}.pdf"
-    filepath = certificate_dir() / filename
 
-    c = canvas.Canvas(str(filepath), pagesize=A4)
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
     _draw_frame_and_background(c, width, height)
@@ -356,18 +361,16 @@ def generate_approval_pdf(application, member, scheme, reviewed_by_name: str) ->
 
     c.showPage()
     c.save()
-    return str(filepath)
+    return buffer.getvalue()
 
 
-def generate_certificate_pdf(certificate_number: str, certificate_type: str, member, issued_by_name: str, certificate_title: str | None = None) -> str:
+def generate_certificate_pdf(certificate_number: str, certificate_type: str, member, issued_by_name: str, certificate_title: str | None = None) -> bytes:
     """Renders an official-styled certificate PDF (bordered, sealed, signed)
     and saves it to disk. Returns the file path stored on the Certificate record.
     """
     _register_fonts()
-    filename = f"{certificate_number}.pdf"
-    filepath = certificate_dir() / filename
-
-    c = canvas.Canvas(str(filepath), pagesize=A4)
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
     _draw_frame_and_background(c, width, height)
@@ -427,4 +430,7 @@ def generate_certificate_pdf(certificate_number: str, certificate_type: str, mem
 
     c.showPage()
     c.save()
-    return str(filepath)
+    return buffer.getvalue()
+
+
+
