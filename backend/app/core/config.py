@@ -1,4 +1,3 @@
-```python
 import os
 import secrets
 from pathlib import Path
@@ -92,4 +91,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-```
